@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Item = require('../models/item');
 
+
 // Create Item
 router.post('/addWord', async (req, res) => {
     const item = new Item(req.body);
@@ -18,7 +19,9 @@ router.get('/getAll', async (req, res) => {
     try {
         const items = await Item.find();
         res.status(200).json(items);
+        console.log('Palavras buscadas com sucesso', items);
     } catch (error) {
+        console.error('Erro ao buscar palavras', error)
         res.status(500).json({ error: error.message });
     }
 });
@@ -37,21 +40,34 @@ router.get('/getWord/:id', async (req, res) => {
 // Update Item
 router.put('/updateWord/:id', async (req, res) => {
     try {
+        console.log('Atualizando a palavra:', req.body)
         const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!updatedItem) return res.status(404).json({ error: 'Item not found' });
         res.status(200).json(updatedItem);
     } catch (error) {
+        console.error('Erro ao atualizar palavra:', error)
         res.status(400).json({ error: error.message });
     }
 });
 
 // Delete Item
-router.delete('deleteWord/:id', async (req, res) => {
+router.delete('/deleteWord/:id', async (req, res) => {
     try {
         const deletedItem = await Item.findByIdAndDelete(req.params.id);
         if (!deletedItem) return res.status(404).json({ error: 'Item not found' });
         res.status(200).json(deletedItem);
     } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/getWords/:language/:categoria', async (req, res) => {
+    try {
+        console.log('Executando busca com os seguintes parametros', {language: req.params.language, categoria: req.params.categoria})
+        const words = await Item.find({language: req.params.language, categoria: req.params.categoria});
+        res.status(200).json(words);
+    } catch (error) {
+        console.log('Erro ao buscar palavras por idioma e categoria:', error);
         res.status(500).json({ error: error.message });
     }
 });
