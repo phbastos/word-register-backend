@@ -18,10 +18,6 @@ const itemSchema = new mongoose.Schema({
             type: String,
             required: false,
         },
-        sentences: [{
-            type: [String],
-            required: false,
-        }],
         categoria: {
             type: String,
             required: true,
